@@ -25,6 +25,10 @@ void setup() {
     service->start();
     server->getAdvertising()->start();
 
+    BLEAdvertising *advertising = server->getAdvertising();
+    advertising->addServiceUUID(SERVICE_UUID);
+    advertising->start();
+
 }
 
 void loop() {
