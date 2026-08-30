@@ -9,12 +9,15 @@
 #define TX_CHARACTERISTIC   "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
 
+BLECharacteristic *rxCharacteristic;
+BLECharacteristic *txCharacteristic;
+
+
 class ServerCallbacks : public BLEServerCallbacks {
 
     void onConnect(BLEServer* server) override {
 
         Serial.println("Device connected!");
-        Serial.println("Client connected");
     }
 
     void onDisconnect(BLEServer* server) override {
@@ -30,8 +33,8 @@ void setup() {
 
     BLEService *service = server->createService(SERVICE_UUID);
 
-    BLECharacteristic *rxCharacteristic = service->createCharacteristic( RX_CHARACTERISTIC, BLECharacteristic::PROPERTY_WRITE);
-    BLECharacteristic *txCharacteristic = service->createCharacteristic(TX_CHARACTERISTIC, BLECharacteristic::PROPERTY_NOTIFY);
+    rxCharacteristic = service->createCharacteristic( RX_CHARACTERISTIC, BLECharacteristic::PROPERTY_WRITE);
+    txCharacteristic = service->createCharacteristic(TX_CHARACTERISTIC, BLECharacteristic::PROPERTY_NOTIFY);
 
     txCharacteristic->addDescriptor(new BLE2902());
 
@@ -47,4 +50,6 @@ void setup() {
 
 void loop() {
     delay(1000);
+    txCharacteristic->setValue("Hello From Esp32 navigator");
+    txCharacteristic->notify();
 }
