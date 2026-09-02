@@ -25,6 +25,15 @@ class ServerCallbacks : public BLEServerCallbacks {
     }
 };
 
+class RxCallback : public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *characteristic) {
+        std::string value = characteristic->getValue();
+
+        Serial.print("Received: ");
+        Serial.println(value.c_str());
+    }
+};
+
 void setup() {
     Serial.begin(115200);
     BLEDevice::init("ESP32-NAVIGATOR");
@@ -37,7 +46,7 @@ void setup() {
     txCharacteristic = service->createCharacteristic(TX_CHARACTERISTIC, BLECharacteristic::PROPERTY_NOTIFY);
 
     txCharacteristic->addDescriptor(new BLE2902());
-
+    rxCharacteristic->setCallbacks( new RxCallback());
     service->start();
     server->setCallbacks(new ServerCallbacks());
     server->getAdvertising()->start();
